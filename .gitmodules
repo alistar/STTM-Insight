@@ -1,0 +1,3 @@
+[submodule "gsdmm"]
+	path = gsdmm
+	url = https://github.com/rwalk/gsdmm
