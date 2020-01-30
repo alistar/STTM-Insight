@@ -8,6 +8,7 @@ from nltk import FreqDist
 from nltk.corpus import stopwords
 from tqdm import tqdm_notebook as tqdm
 import string
+import re
 
 #try:
 #    stopwords = stopwords.words('english')
@@ -71,6 +72,7 @@ class Corpus:
         docs: a list containing different text documents
         lowercase (default to False): if True, all words be lower-cased at the beginning
         remove_punct(default to False): if True removes punctuation signs
+        strip_non_ascii(default to False): if True all non-asci chars are removed
         tokenizer (optional): tokenizer to replace the default "NLTK.TreeBankWordTokenizer"
         remove_stopwords (default to False): if True NLTK."English" stopwords will be removed
         lemmatize (default to False: if True, NLTK.WordNetLemmatizer will be used to Lemmatize
@@ -107,13 +109,19 @@ class Corpus:
                 a dictionary containing {oov token: frequency_in_corpus}
     """
 
-    def __init__(self, docs, lowercase=False, remove_punct=False, tokenizer=TreebankWordTokenizer(), remove_stopwords=False, lemmatize=False, verbose=1):
+    def __init__(self, docs, lowercase=False, remove_punct=False, only_alphanum=False, strip_non_ascii=False, tokenizer=TreebankWordTokenizer(), remove_stopwords=False, lemmatize=False, verbose=1):
         self.verbose = verbose
+        doc_copy = docs.copy()
         if lowercase:
             docs = [doc.lower() for doc in docs]
         if remove_punct:
             translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
             docs = [doc.translate(translator) for doc in docs]
+        if strip_non_ascii:
+            def remove_non_ascii(string):
+                stripped = (c for c in string if 0 < ord(c) < 127)
+                return ''.join(stripped)
+            docs = [remove_non_ascii(doc) for doc in docs]
         tokenized_docs = [tokenizer.tokenize(doc) for doc in docs]
         if remove_stopwords:
             stopwordslist = set(stopwords.words('english'))
@@ -127,6 +135,12 @@ class Corpus:
             for doc in tokenized_docs:
                 tokenized_clean.append([lemmatizer.lemmatize(token) for token in doc])
             tokenized_docs = tokenized_clean
+        #Below checks empty tokenized docs that could happend after e.g., stopword removal and reverts them to original
+        for i, doc in enumerate(tokenized_docs):
+            if len(doc) < 1:
+                print(i, doc_copy[i])
+                tokenized_docs[i] = tokenizer.tokenize(doc_copy[i])
+
         self.tokenized = tokenized_docs
         self.lengths = [len(doc) for doc in tokenized_docs]
         freq_dist = dict(FreqDist([token for doc in tokenized_docs for token in doc]))
@@ -138,6 +152,13 @@ class Corpus:
         if verbose:
             print(
                 f"The corpus contains {np.array([val for val in freq_dist.values()]).sum()} total tokens where {len(freq_dist)} are unique")
+
+    def untokenize(self):
+        docs = []
+        for doc in self.tokenized:
+            docs.append(' '.join(doc).strip())
+        return docs
+        
 
     def to_indices(self, word2index=None, oov_ind=None, max_length=None, buffer_ind=None):
         if not isinstance(word2index, dict):
