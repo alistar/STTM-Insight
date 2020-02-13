@@ -6,7 +6,7 @@ from nltk.tokenize import TreebankWordTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import FreqDist
 from nltk.corpus import stopwords
-from tqdm import tqdm_notebook as tqdm
+#from tqdm import tqdm_notebook as tqdm
 import string
 import re
 
@@ -74,10 +74,13 @@ class Corpus:
         remove_punct(default to False): if True removes punctuation signs
         strip_non_ascii(default to False): if True all non-asci chars are removed
         tokenizer (optional): tokenizer to replace the default "NLTK.TreeBankWordTokenizer"
+        remove_digits (default to False): if True all digits will be removed
         remove_stopwords (default to False): if True NLTK."English" stopwords will be removed
         lemmatize (default to False: if True, NLTK.WordNetLemmatizer will be used to Lemmatize
+        drop_empty_tokens (default to True): if False, docs which are empty after cleaning will be tokenized w/o any cleaning
 
     attributes:
+        original: orignal documents
         tokenized: a list containing token lists for each document
         lengths: a list containing the length (tokens) of each documents
         token_dist: a dictionary containing {token: frequency_in_corpus)
@@ -109,7 +112,7 @@ class Corpus:
                 a dictionary containing {oov token: frequency_in_corpus}
     """
 
-    def __init__(self, docs, lowercase=False, remove_punct=False, only_alphanum=False, strip_non_ascii=False, tokenizer=TreebankWordTokenizer(), remove_stopwords=False, lemmatize=False, verbose=1):
+    def __init__(self, docs, lowercase=False, remove_punct=False, strip_non_ascii=False, tokenizer=TreebankWordTokenizer(), remove_digits=False,remove_stopwords=False, lemmatize=False, drop_empty_tokens=True, verbose=1):
         self.verbose = verbose
         doc_copy = docs.copy()
         if lowercase:
@@ -123,8 +126,14 @@ class Corpus:
                 return ''.join(stripped)
             docs = [remove_non_ascii(doc) for doc in docs]
         tokenized_docs = [tokenizer.tokenize(doc) for doc in docs]
+        if remove_digits:
+            tokenized_clean = []
+            for doc in tokenized_docs:
+                tokenized_clean.append([token for token in doc if not token.isdigit()])
+            tokenized_docs = tokenized_clean
         if remove_stopwords:
-            stopwordslist = set(stopwords.words('english'))
+            stopwordslist = list(stopwords.words('english'))
+            stopwordslist= stopwordslist + [s.capitalize() for s in stopwordslist]
             tokenized_clean = []
             for doc in tokenized_docs:
                 tokenized_clean.append([token for token in doc if token not in stopwordslist])
@@ -138,9 +147,14 @@ class Corpus:
         #Below checks empty tokenized docs that could happend after e.g., stopword removal and reverts them to original
         for i, doc in enumerate(tokenized_docs):
             if len(doc) < 1:
-                print(i, doc_copy[i])
-                tokenized_docs[i] = tokenizer.tokenize(doc_copy[i])
-
+                if verbose:
+                    print(i, doc_copy[i])
+                if drop_empty_tokens:
+                    doc_copy.pop(i)    
+                    tokenized_docs.pop(i)
+                else: 
+                    tokenized_docs[i] = tokenizer.tokenize(doc_copy[i])
+        self.original = doc_copy
         self.tokenized = tokenized_docs
         self.lengths = [len(doc) for doc in tokenized_docs]
         freq_dist = dict(FreqDist([token for doc in tokenized_docs for token in doc]))
@@ -272,4 +286,4 @@ def load_glove(file="./glove.840B.300d.txt"):
     return embeddings_dict
 
 if __name__ == "__main__":
-    print(f"This code only contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing")
+    print(f"This code contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing")
