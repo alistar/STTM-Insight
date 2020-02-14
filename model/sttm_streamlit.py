@@ -12,40 +12,37 @@ from model.emb_kmeans_cls import Emb_Kmeans_Model
 import random
 from wordcloud import WordCloud
 from matplotlib import pyplot as plt
+import time
+from google_drive_downloader import GoogleDriveDownloader as gdd
 
 @st.cache
 def load_emb():
-	with open('./Glove_quora_words.pkl', 'rb') as file2open:
-		embedding_cls = pickle.load(file2open) 
+	try:
+		with open('../../Insight_STTM/Glove_quora_words.pkl', 'rb') as file2open:
+			embedding_cls = pickle.load(file2open)
+	except:
+		file_id = '1AgWnGC5pwS96u5zBjk_LfkAdDAuSkLcC'
+		dest_path= './Glove_quora_words.pkl'
+		gdd.download_file_from_google_drive(file_id=file_id,
+                                    dest_path=dest_path,
+                                    unzip=True)
+		with open('./Glove_quora_words.pkl', 'rb') as file2open:
+			embedding_cls = pickle.load(file2open)		
 	emb_matrix = embedding_cls.matrix()
 	word2index = embedding_cls.word2index
 	return word2index, emb_matrix
 
 #@st.cache
-def load_data0(file=None, sample_size=None):
-	if sample_size:
-		try:
-			df_data = pd.read_csv(file).sample(sample_size)
-		except:
-			df_data = pd.read_csv(file)
-			st.sidebar.warning(f"sample size set to data length of {df_data.shape[0]}")
-	else:
-		df_data = pd.read_csv(file)
-	if (df_data.shape[0] > 10000):
-		st.sidebar.warning(f"Data too long. Consider setting sample size to {10000}")
-	if st.sidebar.checkbox('Have a look at data'):
-		st.sidebar.dataframe(df_data.head(10))
-	columns = list(df_data.columns)
-	column2read = st.sidebar.selectbox('Which columnd contain the text?', columns)
-	return df_data[column2read].to_list()
-
-#@st.cache
-def load_data1():
+def load_data():
 	try:
 		df_data = pd.read_csv('../data/NYT_4topics_int.csv')
 	except:
-		import s3fs
-		df_data = pd.read_csv('s3://alistar100/Insight/Data/NYT_data/NYT_4topics_int.csv')
+		file_id = '1BBy_zvlD6RunymaxcXGCSEw2At2KpqHk'
+		dest_path= './NYT_4topics_int.csv'
+		gdd.download_file_from_google_drive(file_id=file_id,
+                                    dest_path=dest_path,
+                                    unzip=True)
+		df_data = pd.read_csv('./NYT_4topics_int.csv')
 	column2read = 'text'		
 	return df_data[column2read].to_list()
 
@@ -125,18 +122,28 @@ if __name__ == "__main__":
 #    print(f"This code contains functions to work with GSDM topic modeling!")
 #    print(f"Below we run a demo using NYT article titles from 4 different topics")
 		#st.header(f"This app extracts topics from a collection of short text!")
+		text4topics = load_data()
 		if st.sidebar.checkbox('Upload a file'):
-			uploaded_file = st.sidebar.file_uploader("Choose a CSV file if you want to use your data!", type="csv")
-			if st.sidebar.checkbox('Sample the input'):
-				sample_size = st.sidebar.slider("Sample size", 
-																				min_value=1, max_value=5000, 
-																				value=3000, step=500, format='%i')
-			else:
-				sample_size=None
+			uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
+		#	while uploaded_file is None:
+		#		st.sidebar.warning(uploaded_file)
+		#		time.sleep(2)
+			if uploaded_file is not None:
+				df_data = pd.read_csv(uploaded_file)			
+				if st.sidebar.checkbox('Sample the input'):
+					sample_size = st.sidebar.slider("Sample size", 
+													min_value=1, max_value=df_data.shape[0], 
+													value=int(df_data.shape[0]*0.5), step=500, format='%i')
+					if sample_size > df_data.shape[0]:
+						sample_size = df_data.shape[0]
+						st.sidebar.warning(f"sample size set to data length of {df_data.shape[0]}")
+					df_data = df_data.sample(sample_size)
+				if st.sidebar.checkbox('Have a look at data'):
+					st.sidebar.dataframe(df_data.head(10))
+				columns = list(df_data.columns)
+				column2read = st.sidebar.selectbox('Which columnd contain the text?', columns)
 
-			text4topics = load_data0(file=uploaded_file, sample_size=sample_size)
-		else:
-			text4topics = load_data1()
+				text4topics = list(df_data[column2read])
 		
 		if st.sidebar.checkbox('Tune text processing'):
 			lowercase = st.sidebar.checkbox('LowerCase')
@@ -155,7 +162,7 @@ if __name__ == "__main__":
         
 
 
-		model_choice = st.sidebar.selectbox('Which model?', ('Glove+K-means', 'GSDMM'))
+		model_choice = st.sidebar.radio('Which model?', ('Glove+K-means', 'GSDMM'))
 		#model_choice = 'Emb_kmeans' # 'GSDMS'
 
 		n_class = st.sidebar.number_input('How many classes',format='%i', 
