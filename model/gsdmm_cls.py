@@ -88,9 +88,11 @@ if __name__ == "__main__":
     NYT_topics = list(NYT_data.topic)
     NYT_topics_int = list(NYT_data.topic_int)
     
-    gsm = GSDMM_Model(corpus = NYT_titles, n_iter = 20)
+    gsm = GSDMM_Model(corpus = NYT_titles, n_class=4, n_iter = 20)
     h,c,v = gsm.hcv_score(true_labels=NYT_topics_int)
     print(f"H: {h:.3f}, C: {c:.3f} & V_score: {v:.2f}")
 
     n_doc_per_c, fractions, populars, freq_dists = gsm.inferences()
     print(f"number of docs per cluster: {n_doc_per_c}")
+    #NYT_data['GSDMM-pred'] = gsm.predict()
+    #NYT_data.to_csv('NYT_4topics_gspred.csv', index=False)

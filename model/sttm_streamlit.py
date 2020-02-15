@@ -122,6 +122,7 @@ if __name__ == "__main__":
 #    print(f"This code contains functions to work with GSDM topic modeling!")
 #    print(f"Below we run a demo using NYT article titles from 4 different topics")
 		#st.header(f"This app extracts topics from a collection of short text!")
+		
 		text4topics = load_data()
 		if st.sidebar.checkbox('Upload a file'):
 			uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
@@ -144,7 +145,8 @@ if __name__ == "__main__":
 				column2read = st.sidebar.selectbox('Which columnd contain the text?', columns)
 
 				text4topics = list(df_data[column2read])
-		
+		else:
+			st.write("<font color='blue'>Loading a sample data containing 3k NYT article titles. Upload a file to replace it.</font>", unsafe_allow_html=True)
 		if st.sidebar.checkbox('Tune text processing'):
 			lowercase = st.sidebar.checkbox('LowerCase')
 			remove_punct= st.sidebar.checkbox('Remove Punctuations')
@@ -166,26 +168,26 @@ if __name__ == "__main__":
 		#model_choice = 'Emb_kmeans' # 'GSDMS'
 
 		n_class = st.sidebar.number_input('How many classes',format='%i', 
-																			min_value = 2, max_value=50, value =4, step=1)
+										  min_value = 2, max_value=50, value =4, step=1)
 
 		if st.sidebar.checkbox('Tune the model'):
 			if model_choice == 'Glove+K-means':
 				max_iter = st.sidebar.slider("Max # of iterations", 
-																		min_value=1, max_value=5000, 
-																		value=1000, step=500, format='%i')
+											min_value=1, max_value=5000, 
+											value=1000, step=500, format='%i')
 				batch_size = st.sidebar.slider("Batch size", 
-																		min_value=1, max_value=1000, 
-																		value=200, step=100, format='%i')
+												min_value=1, max_value=1000, 
+												value=200, step=100, format='%i')
 			else:
 				n_iter = st.sidebar.slider("# of iterations", 
-																		min_value=1, max_value=100, 
-																		value=30, step=10, format='%i')
+											min_value=1, max_value=100, 
+											value=10, step=10, format='%i')
 				alpha= st.sidebar.slider("alpha",
-																		min_value=0., max_value=1., 
-																		value=0.7, step=0.1, format='%f')
+										min_value=0., max_value=1., 
+										value=0.1, step=0.1, format='%f')
 				beta= st.sidebar.slider("beta",
-																		min_value=0., max_value=1., 
-																		value=0.6, step=0.1, format='%f')
+										min_value=0., max_value=1., 
+										value=0.1, step=0.1, format='%f')
 		else:
 			if model_choice == 'Glove+K-means':
 				max_iter = 1000
@@ -198,14 +200,14 @@ if __name__ == "__main__":
 		def_nc2show = int(n_class)
 		if st.sidebar.checkbox('Fine-tune the outputs'):
 			nc2show = st.sidebar.slider("How many clusters to show?",
-													min_value=1, max_value=n_class, value=def_nc2show, step=1, format='%i')
+										min_value=1, max_value=n_class, value=def_nc2show, step=1, format='%i')
 			nword2show = st.sidebar.slider("How many words per cluster?",
-													min_value=1, max_value=50, value=10, step=1, format='%i')
+										  min_value=1, max_value=50, value=10, step=1, format='%i')
 		else:
 			nc2show = def_nc2show
 			nword2show = 10
 
-		show_wordclouds = st.sidebar.checkbox('Show WordClouds')
+		show_wordclouds = st.sidebar.checkbox('Show WordClouds', value=True)
 
 		model = None
 		model_is_loaded = False
@@ -213,16 +215,16 @@ if __name__ == "__main__":
 			model_is_loaded = True
 			if model_choice == 'Glove+K-means':
 				model = setup_model_Kmeans(text4topics=text4topics,
-																	lowercase=lowercase, remove_punct=remove_punct,
-																	strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
-																	remove_stopwords=remove_stopwords, lemmatize=lemmatize,
-																	n_class = n_class, max_iter=max_iter, batch_size=batch_size)
+											lowercase=lowercase, remove_punct=remove_punct,
+											strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
+											remove_stopwords=remove_stopwords, lemmatize=lemmatize,
+											n_class = n_class, max_iter=max_iter, batch_size=batch_size)
 			else:
 				model = setup_model_GSDMM(text4topics=text4topics,
-																	lowercase=lowercase, remove_punct=remove_punct,
-																	strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
-																	remove_stopwords=remove_stopwords, lemmatize=lemmatize,
-																	n_class = n_class, alpha=alpha, beta=beta, n_iter=n_iter)
+											lowercase=lowercase, remove_punct=remove_punct,
+											strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
+											remove_stopwords=remove_stopwords, lemmatize=lemmatize,
+											n_class = n_class, alpha=alpha, beta=beta, n_iter=n_iter)
 
 #		if st.button(f'Show results'):
 #			if model:
@@ -230,6 +232,6 @@ if __name__ == "__main__":
 			n_doc_per_c, fractions, populars, freq_dists = model.inferences()
 
 			show_insight(n_doc_per_c=n_doc_per_c, 
-									fractions=fractions, populars=populars, 
-									freq_dists=freq_dists, show_wordclouds =show_wordclouds,
-									nc2show=nc2show, nword2show=nword2show)
+						fractions=fractions, populars=populars, 
+						freq_dists=freq_dists, show_wordclouds =show_wordclouds,
+						nc2show=nc2show, nword2show=nword2show)
