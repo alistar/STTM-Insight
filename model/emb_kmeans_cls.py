@@ -43,9 +43,6 @@ class Emb_Kmeans_Model:
         self.n_class = n_class
         self.corpus = corpus
 
-        if verbose:
-            print(f"GSDMS model parameters: n_class = {n_class}, alpha = {alpha}, beta = {beta}, n_iters = {n_iters}.\n")
-
         self.model = MiniBatchKMeans(n_clusters=n_class, init='k-means++', max_iter=max_iter,
                                     batch_size=batch_size, verbose=0, compute_labels=True,
                                     random_state=random_state, tol=tol, max_no_improvement=max_no_improvement,
@@ -105,8 +102,19 @@ if __name__ == "__main__":
     NYT_topics = list(NYT_data.topic)
     NYT_topics_int = list(NYT_data.topic_int)
     
-    with open('./Glove_quora_words.pkl', 'rb') as file2open:
-        embedding_cls = pickle.load(file2open) 
+    try:
+        with open('../../Insight_STTM/Glove_quora_words.pkl', 'rb') as file2open:
+            embedding_cls = pickle.load(file2open)
+    except:
+        from google_drive_downloader import GoogleDriveDownloader as gdd
+        file_id = '1AgWnGC5pwS96u5zBjk_LfkAdDAuSkLcC'
+        dest_path= './Glove_quora_words.pkl'
+        gdd.download_file_from_google_drive(file_id=file_id,
+                                            dest_path=dest_path,
+                                            unzip=True)
+        with open('./Glove_quora_words.pkl', 'rb') as file2open:
+            embedding_cls = pickle.load(file2open)
+        
     emb_matrix = embedding_cls.matrix()
     word2index = embedding_cls.word2index
 
@@ -119,3 +127,5 @@ if __name__ == "__main__":
     
     n_doc_per_c, fractions, populars, freq_dists = GKmeans.inferences()
     print(f"number of docs per cluster: {n_doc_per_c}")
+#    NYT_data['Glove-Kmeans-pred'] = GKmeans.predict()
+#    NYT_data.to_csv('NYT_4topics_pred.csv', index=False)

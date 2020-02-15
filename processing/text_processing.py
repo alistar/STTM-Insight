@@ -65,6 +65,33 @@ class Embedding_cls:
             embedding_matrix[index, :] = self.embedding_dic[word]
         return embedding_matrix
 
+    def load_glove(file="./glove.840B.300d.txt"):
+        """
+        inputs:
+            file: the address of file containing embedding info
+        outputs:
+            embeddings_index: a dictionary containing {embedding words: their representation}
+        """
+
+        def get_coefs(word, *arg):
+            return word, np.asarray(arg, dtype='float32')
+
+        try:
+            open(file).close()
+        except OSError:
+            url = "http://nlp.stanford.edu/data/glove.840B.300d.zip"
+            adrs = "./glove.840B.300d"
+            print(f"Embedding file {file} unreachable")
+            print(f"downloading {url} int {adrs}")
+#        wget.download(url, adrs+".zip")
+            os.system("wget "+url)
+            os.system("unzip "+adrs+".zip")
+            os.system("ls")
+            file = adrs+".txt"
+
+        embeddings_dict = dict(get_coefs(*o.split(" ")) for o in open(file, encoding='latin'))
+        return embeddings_dict
+
 
 class Corpus:
     """
@@ -252,38 +279,6 @@ class Corpus:
                 f"This means {sum([freq for token, freq in outliers.items()]) / self.n_tokens:{2}.{3}} of all tokens in the corpus are not covered!")
         return outliers
 
-
-"""
-functions:
-"""
-
-
-def load_glove(file="./glove.840B.300d.txt"):
-    """
-    inputs:
-        file: the address of file containing embedding info
-    outputs:
-        embeddings_index: a dictionary containing {embedding words: their representation}
-    """
-
-    def get_coefs(word, *arg):
-        return word, np.asarray(arg, dtype='float32')
-
-    try:
-        open(file).close()
-    except OSError:
-        url = "http://nlp.stanford.edu/data/glove.840B.300d.zip"
-        adrs = "./glove.840B.300d"
-        print(f"Embedding file {file} unreachable")
-        print(f"downloading {url} int {adrs}")
-#        wget.download(url, adrs+".zip")
-        os.system("wget "+url)
-        os.system("unzip "+adrs+".zip")
-        os.system("ls")
-        file = adrs+".txt"
-
-    embeddings_dict = dict(get_coefs(*o.split(" ")) for o in open(file, encoding='latin'))
-    return embeddings_dict
 
 if __name__ == "__main__":
     print(f"This code contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing")
