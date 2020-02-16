@@ -1,4 +1,4 @@
-name: git-env
+name: STTM-env
 channels:
   - conda-forge
   - defaults

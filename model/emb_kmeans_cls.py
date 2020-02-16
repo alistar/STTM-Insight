@@ -103,7 +103,7 @@ if __name__ == "__main__":
     NYT_topics_int = list(NYT_data.topic_int)
     
     try:
-        with open('../../Insight_STTM/Glove_quora_words.pkl', 'rb') as file2open:
+        with open('./Glove_quora_words.pkl', 'rb') as file2open:
             embedding_cls = pickle.load(file2open)
     except:
         from google_drive_downloader import GoogleDriveDownloader as gdd

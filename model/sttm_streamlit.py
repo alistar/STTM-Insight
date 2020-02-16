@@ -18,7 +18,7 @@ from google_drive_downloader import GoogleDriveDownloader as gdd
 @st.cache
 def load_emb():
 	try:
-		with open('../../Insight_STTM/Glove_quora_words.pkl', 'rb') as file2open:
+		with open('./Glove_quora_words.pkl', 'rb') as file2open:
 			embedding_cls = pickle.load(file2open)
 	except:
 		file_id = '1AgWnGC5pwS96u5zBjk_LfkAdDAuSkLcC'
@@ -48,43 +48,43 @@ def load_data():
 
 @st.cache
 def setup_model_Kmeans(text4topics=None,
-							 				lowercase=True, remove_punct=True, strip_non_ascii=True,
-                      remove_digits=True, remove_stopwords=True, lemmatize=True,
-											n_class=4, max_iter=1000, max_no_improvement=50,
-							 				random_state=4, reassignment_ratio=0.0001, batch_size=100, tol=1e-05):
+					  	lowercase=True, remove_punct=True, strip_non_ascii=True,
+                      	remove_digits=True, remove_stopwords=True, lemmatize=True,
+						n_class=4, max_iter=1000, max_no_improvement=50,
+						random_state=4, reassignment_ratio=0.0001, batch_size=100, tol=1e-05):
 	word2index, emb_matrix = load_emb()
 	model = Emb_Kmeans_Model(corpus=text4topics, word2index=word2index, emb_matrix=emb_matrix, agg_func='mean',
-													lowercase=lowercase, remove_punct=remove_punct,
-													strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
-													remove_stopwords=remove_stopwords, lemmatize=lemmatize,
-													n_class=n_class,max_iter=max_iter, max_no_improvement=max_no_improvement,
-													random_state=random_state, reassignment_ratio=reassignment_ratio,
-													tol=tol, batch_size=batch_size, verbose=False)
+							lowercase=lowercase, remove_punct=remove_punct,
+							strip_non_ascii=strip_non_ascii, remove_digits=remove_digits, 
+							remove_stopwords=remove_stopwords, lemmatize=lemmatize,
+							n_class=n_class,max_iter=max_iter, max_no_improvement=max_no_improvement,
+							random_state=random_state, reassignment_ratio=reassignment_ratio,
+							tol=tol, batch_size=batch_size, verbose=False)
 	return model
 @st.cache
 def setup_model_GSDMM(text4topics=None,
-							 				lowercase=True, remove_punct=True, strip_non_ascii=True,
-                      remove_digits=True, remove_stopwords=True, lemmatize=True,
-										  n_class=4, alpha=0.7, beta=0.6, n_iter=30):
+					lowercase=True, remove_punct=True, strip_non_ascii=True,
+                    remove_digits=True, remove_stopwords=True, lemmatize=True,
+					n_class=4, alpha=0.7, beta=0.6, n_iter=30):
 
 	model = GSDMM_Model(corpus=text4topics,
-											lowercase=lowercase, remove_punct=remove_punct,
-											strip_non_ascii=strip_non_ascii, remove_digits=remove_digits,
-											remove_stopwords=remove_stopwords, lemmatize=lemmatize, 
-											n_class=n_class, alpha=alpha, beta=beta, n_iter=n_iter)
+						lowercase=lowercase, remove_punct=remove_punct,
+						strip_non_ascii=strip_non_ascii, remove_digits=remove_digits,
+						remove_stopwords=remove_stopwords, lemmatize=lemmatize, 
+						n_class=n_class, alpha=alpha, beta=beta, n_iter=n_iter)
 	return model
 
 #@st.cache
 def show_insight(n_doc_per_c, fractions, populars, freq_dists,
-								show_wordclouds=True, 
-								nc2show=4, nword2show=20):
+				show_wordclouds=True, 
+				nc2show=4, nword2show=20):
 	if show_wordclouds:
 		wordcloud = WordCloud(background_color='white'
-													,min_font_size=4
-													,max_words=30
-													,prefer_horizontal = 0.7
+							,min_font_size=4
+							,max_words=30
+							,prefer_horizontal = 0.7
 #         	                  ,contour_color='viridis', 'rainbow', 'paired'
-													,contour_color='steelblue')#.generate(NYT_full)
+							,contour_color='steelblue')#.generate(NYT_full)
 
 	for i in range(nc2show):
 		try:
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
 				text4topics = list(df_data[column2read])
 		else:
-			st.write("<font color='blue'>Loading a sample data containing 3k NYT article titles. Upload a file to replace it.</font>", unsafe_allow_html=True)
+			st.write("<font color=#000080>Using a sample of 3k titles from 4 different NYT article categories. </br> Upload a file using sidebar to replace it.</font>", unsafe_allow_html=True)
 		if st.sidebar.checkbox('Tune text processing'):
 			lowercase = st.sidebar.checkbox('LowerCase')
 			remove_punct= st.sidebar.checkbox('Remove Punctuations')
@@ -169,7 +169,6 @@ if __name__ == "__main__":
 
 		n_class = st.sidebar.number_input('How many classes',format='%i', 
 										  min_value = 2, max_value=50, value =4, step=1)
-
 		if st.sidebar.checkbox('Tune the model'):
 			if model_choice == 'Glove+K-means':
 				max_iter = st.sidebar.slider("Max # of iterations", 
@@ -193,9 +192,9 @@ if __name__ == "__main__":
 				max_iter = 1000
 				batch_size = n_class * 25
 			else:
-				n_iter = 30
-				alpha = 0.7
-				beta = 0.6
+				n_iter = 10
+				alpha = 0.1
+				beta = 0.1
 
 		def_nc2show = int(n_class)
 		if st.sidebar.checkbox('Fine-tune the outputs'):
