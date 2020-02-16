@@ -14,7 +14,7 @@ import re
 #    stopwords = stopwords.words('english')
 #except:
 from nltk import download
-#download('stopwords')
+download('stopwords')
 """
 Classes:
 """
