@@ -36,7 +36,6 @@ def load_emb():
     return word2index, emb_matrix
 
 
-# @st.cache
 def load_data():
     try:
         df_data = pd.read_csv("../data/NYT_4topics_int.csv")
@@ -138,21 +137,16 @@ def show_insight(
             background_color="white",
             min_font_size=4,
             max_words=30,
-            prefer_horizontal=0.7
-            #         	                  ,contour_color='viridis', 'rainbow', 'paired'
-            ,
+            prefer_horizontal=0.7,
             contour_color="steelblue",
-        )  # .generate(NYT_full)
+        )  
 
     for i in range(nc2show):
         try:
-            #            st.subheader(f"Cluster &nbsp; {i+1} contains {n_doc_perc[i]} pieces (%{fractions[i]:.0f})")
             st.subheader(
                 f"Cluster {i+1} contains {n_doc_per_c[i]} pieces (%{fractions[i]:.0f})"
             )
             st.subheader(f"Top words:")
-            #            print(f"Cluster {i+1} contains {n_doc_per_c[i]} pieces (%{fractions[i]:.0f})")
-            #            print(f"Top words:")
             str_words_freq = ""
             j = 0
             this_cluster_words = freq_dists[i]
@@ -160,38 +154,26 @@ def show_insight(
                 if j >= nword2show:
                     break
                 j += 1
-                # str_words_freq+=("\t{}- {} ({})    ".format(j, key, value))
                 str_words_freq += f"\t{j}- {key} ({value}) "
-                # st.write(f"{str_words_freq}")
             st.write(f"{str_words_freq}")
-            #                print(f"{str_words_freq}")
             if show_wordclouds:
                 plt.imshow(
                     wordcloud.generate_from_frequencies(frequencies=this_cluster_words)
                 )
                 plt.axis("off")
-                #            plt.show()
                 st.pyplot()
-                # plt.savefig('word_cloud_cluster'+str(i)+'.png')
 
         except IndexError:
             st.error(f"no more clusters/word are present!")
             break
-    #                print(f"no more clusters/word are present!")
     return
 
 
 if __name__ == "__main__":
-    #    print(f"This code contains functions to work with GSDM topic modeling!")
-    #    print(f"Below we run a demo using NYT article titles from 4 different topics")
-    # st.header(f"This app extracts topics from a collection of short text!")
 
     text4topics = load_data()
     if st.sidebar.checkbox("Upload a file"):
         uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
-        # 	while uploaded_file is None:
-        # 		st.sidebar.warning(uploaded_file)
-        # 		time.sleep(2)
         if uploaded_file is not None:
             df_data = pd.read_csv(uploaded_file)
             if st.sidebar.checkbox("Sample the input"):
@@ -238,8 +220,7 @@ if __name__ == "__main__":
         lemmatize = True
 
     model_choice = st.sidebar.radio("Which model?", ("Glove+K-means", "GSDMM"))
-    # model_choice = 'Emb_kmeans' # 'GSDMS'
-
+ 
     n_class = st.sidebar.number_input(
         "How many classes", format="%i", min_value=2, max_value=50, value=4, step=1
     )
@@ -341,8 +322,6 @@ if __name__ == "__main__":
                 n_iter=n_iter,
             )
 
-    # 		if st.button(f'Show results'):
-    # 			if model:
     if model_is_loaded:
         n_doc_per_c, fractions, populars, freq_dists = model.inferences()
 
