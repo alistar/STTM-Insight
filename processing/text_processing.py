@@ -1,20 +1,15 @@
-import os
-#import wget
-import numpy as np
 import operator
-from nltk.tokenize import TreebankWordTokenizer
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk import FreqDist
-from nltk.corpus import stopwords
-#from tqdm import tqdm_notebook as tqdm
-import string
+import os
 import re
+import string
 
-#try:
-#    stopwords = stopwords.words('english')
-#except:
-from nltk import download
-download('stopwords')
+import numpy as np
+from nltk import FreqDist, download
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.tokenize import TreebankWordTokenizer
+
+download("stopwords")
 """
 Classes:
 """
@@ -45,13 +40,15 @@ class Embedding_cls:
                     embedding_dic_new[key] = embedding_dic[key]
                 except KeyError:
                     pass
-#                    print(f"vocab {key} not found in embedding")
+            #                    print(f"vocab {key} not found in embedding")
             embedding_dic = embedding_dic_new
         self.embedding_dic = embedding_dic
         self.n_vocab = len(embedding_dic)
         self.emb_dim = len(embedding_dic[list(embedding_dic.keys())[0]])
         if verbose:
-            print(f"Embedding is loaded with {len(embedding_dic)} words each having {len(embedding_dic[list(embedding_dic.keys())[0]])} dimensions")
+            print(
+                f"Embedding is loaded with {len(embedding_dic)} words each having {len(embedding_dic[list(embedding_dic.keys())[0]])} dimensions"
+            )
         vocabs = [word for word in embedding_dic.keys()]
         indices = range(len(embedding_dic))
         self.word2index = {vocabs[i]: i for i in indices}
@@ -64,6 +61,35 @@ class Embedding_cls:
         for index, word in self.index2word.items():
             embedding_matrix[index, :] = self.embedding_dic[word]
         return embedding_matrix
+
+    def load_glove(file="./glove.840B.300d.txt"):
+        """
+        inputs:
+            file: the address of file containing embedding info
+        outputs:
+            embeddings_index: a dictionary containing {embedding words: their representation}
+        """
+
+        def get_coefs(word, *arg):
+            return word, np.asarray(arg, dtype="float32")
+
+        try:
+            open(file).close()
+        except OSError:
+            url = "http://nlp.stanford.edu/data/glove.840B.300d.zip"
+            adrs = "./glove.840B.300d"
+            print(f"Embedding file {file} unreachable")
+            print(f"downloading {url} int {adrs}")
+            #        wget.download(url, adrs+".zip")
+            os.system("wget " + url)
+            os.system("unzip " + adrs + ".zip")
+            os.system("ls")
+            file = adrs + ".txt"
+
+        embeddings_dict = dict(
+            get_coefs(*o.split(" ")) for o in open(file, encoding="latin")
+        )
+        return embeddings_dict
 
 
 class Corpus:
@@ -112,18 +138,34 @@ class Corpus:
                 a dictionary containing {oov token: frequency_in_corpus}
     """
 
-    def __init__(self, docs, lowercase=False, remove_punct=False, strip_non_ascii=False, tokenizer=TreebankWordTokenizer(), remove_digits=False,remove_stopwords=False, lemmatize=False, drop_empty_tokens=True, verbose=1):
+    def __init__(
+        self,
+        docs,
+        lowercase=False,
+        remove_punct=False,
+        strip_non_ascii=False,
+        tokenizer=TreebankWordTokenizer(),
+        remove_digits=False,
+        remove_stopwords=False,
+        lemmatize=False,
+        drop_empty_tokens=True,
+        verbose=1,
+    ):
         self.verbose = verbose
         doc_copy = docs.copy()
         if lowercase:
             docs = [doc.lower() for doc in docs]
         if remove_punct:
-            translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
+            translator = str.maketrans(
+                string.punctuation, " " * len(string.punctuation)
+            )
             docs = [doc.translate(translator) for doc in docs]
         if strip_non_ascii:
+
             def remove_non_ascii(string):
                 stripped = (c for c in string if 0 < ord(c) < 127)
-                return ''.join(stripped)
+                return "".join(stripped)
+
             docs = [remove_non_ascii(doc) for doc in docs]
         tokenized_docs = [tokenizer.tokenize(doc) for doc in docs]
         if remove_digits:
@@ -132,11 +174,13 @@ class Corpus:
                 tokenized_clean.append([token for token in doc if not token.isdigit()])
             tokenized_docs = tokenized_clean
         if remove_stopwords:
-            stopwordslist = list(stopwords.words('english'))
-            stopwordslist= stopwordslist + [s.capitalize() for s in stopwordslist]
+            stopwordslist = list(stopwords.words("english"))
+            stopwordslist = stopwordslist + [s.capitalize() for s in stopwordslist]
             tokenized_clean = []
             for doc in tokenized_docs:
-                tokenized_clean.append([token for token in doc if token not in stopwordslist])
+                tokenized_clean.append(
+                    [token for token in doc if token not in stopwordslist]
+                )
             tokenized_docs = tokenized_clean
         if lemmatize:
             lemmatizer = WordNetLemmatizer()
@@ -144,42 +188,50 @@ class Corpus:
             for doc in tokenized_docs:
                 tokenized_clean.append([lemmatizer.lemmatize(token) for token in doc])
             tokenized_docs = tokenized_clean
-        #Below checks empty tokenized docs that could happend after e.g., stopword removal and reverts them to original
+        # Below checks empty tokenized docs that could happend after e.g., stopword removal and reverts them to original
         for i, doc in enumerate(tokenized_docs):
             if len(doc) < 1:
                 if verbose:
                     print(i, doc_copy[i])
                 if drop_empty_tokens:
-                    doc_copy.pop(i)    
+                    doc_copy.pop(i)
                     tokenized_docs.pop(i)
-                else: 
+                else:
                     tokenized_docs[i] = tokenizer.tokenize(doc_copy[i])
         self.original = doc_copy
         self.tokenized = tokenized_docs
         self.lengths = [len(doc) for doc in tokenized_docs]
         freq_dist = dict(FreqDist([token for doc in tokenized_docs for token in doc]))
-        self.token_dist = dict(sorted(freq_dist.items(), key=operator.itemgetter(1), reverse=True))
+        self.token_dist = dict(
+            sorted(freq_dist.items(), key=operator.itemgetter(1), reverse=True)
+        )
         self.n_docs = len(docs)
         self.n_tokens = np.array([val for val in freq_dist.values()]).sum()
         self.nu_tokens = len(freq_dist)
 
         if verbose:
             print(
-                f"The corpus contains {np.array([val for val in freq_dist.values()]).sum()} total tokens where {len(freq_dist)} are unique")
+                f"The corpus contains {np.array([val for val in freq_dist.values()]).sum()} total tokens where {len(freq_dist)} are unique"
+            )
 
     def untokenize(self):
         docs = []
         for doc in self.tokenized:
-            docs.append(' '.join(doc).strip())
+            docs.append(" ".join(doc).strip())
         return docs
-        
 
-    def to_indices(self, word2index=None, oov_ind=None, max_length=None, buffer_ind=None):
+    def to_indices(
+        self, word2index=None, oov_ind=None, max_length=None, buffer_ind=None
+    ):
         if not isinstance(word2index, dict):
-            raise TypeError("'word2index' should be a 'dict' but its not defined properly!")
+            raise TypeError(
+                "'word2index' should be a 'dict' but its not defined properly!"
+            )
         if not isinstance(oov_ind, int):
             if self.verbose:
-                print(f"'oov_ind' is not provided as an integer key. Its set to max(ind)+1.")
+                print(
+                    f"'oov_ind' is not provided as an integer key. Its set to max(ind)+1."
+                )
             oov_ind = max(list(word2index.values())) + 1
         docs2indices = []
         for doc in self.tokenized:
@@ -205,85 +257,99 @@ class Corpus:
             docs2indices = docs2indices_fixed
         return docs2indices
 
-    def agg_doc_rep(self, word2index=None, emb_matrix=None, oov_ind=None, agg_func='mean'):
+    def agg_doc_rep(
+        self, word2index=None, emb_matrix=None, oov_ind=None, agg_func="mean"
+    ):
         if not isinstance(word2index, dict):
-            raise TypeError("'word2index' should be a 'dict' but its not defined properly!")
-        if (emb_matrix.shape[0] - len(word2index) > 2) or (emb_matrix.shape[0] < len(word2index)):
-#            print(f"'emb_matrix.shape': {emb_matrix.shape}, len(word2index): {len(word2index)}")
-            raise TypeError("'emb_matrix' should be an numpy array with dimension ({len(word2index)}(+2), emb_dim)!")
+            raise TypeError(
+                "'word2index' should be a 'dict' but its not defined properly!"
+            )
+        if (emb_matrix.shape[0] - len(word2index) > 2) or (
+            emb_matrix.shape[0] < len(word2index)
+        ):
+            #            print(f"'emb_matrix.shape': {emb_matrix.shape}, len(word2index): {len(word2index)}")
+            raise TypeError(
+                "'emb_matrix' should be an numpy array with dimension ({len(word2index)}(+2), emb_dim)!"
+            )
         if not isinstance(oov_ind, int):
             if self.verbose:
-                print(f"'oov_ind' is not provided as an integer key. Its set to max(ind)+1.")
+                print(
+                    f"'oov_ind' is not provided as an integer key. Its set to max(ind)+1."
+                )
             oov_ind = max(list(word2index.values())) + 1
-        agg_funcs = ('mean', 'median', 'std', 'min', 'max')
+        agg_funcs = ("mean", "median", "std", "min", "max")
         if agg_func not in agg_funcs:
-            raise TypeError("The provided 'agg_func':{agg_func} is not among available functions {agg_funcs}")
+            raise TypeError(
+                "The provided 'agg_func':{agg_func} is not among available functions {agg_funcs}"
+            )
 
         docs2indices = self.to_indices(word2index=word2index, oov_ind=oov_ind)
 
         def agg_1doc_rep(doc, emb_matrix=emb_matrix, agg_func=agg_func):
             doc_emb = [emb_matrix[ind][:] for ind in doc]
-            return eval('np.' + agg_func + '(doc_emb, axis=0)')
+            return eval("np." + agg_func + "(doc_emb, axis=0)")
 
-        return [agg_1doc_rep(doc, emb_matrix=emb_matrix, agg_func=agg_func) for doc in docs2indices]
+        return [
+            agg_1doc_rep(doc, emb_matrix=emb_matrix, agg_func=agg_func)
+            for doc in docs2indices
+        ]
 
-    def agg_doc_multi_reps(self, word2index=None, emb_matrix=None, oov_ind=None, agg_funcs=['min','mean','max']):
+    def agg_doc_multi_reps(
+        self,
+        word2index=None,
+        emb_matrix=None,
+        oov_ind=None,
+        agg_funcs=["min", "mean", "max"],
+    ):
         if self.verbose:
-            print(f"concatenating multiple aggregate representation of each document: {agg_funcs}")
-        doc_reps = self.agg_doc_rep(word2index=word2index, emb_matrix=emb_matrix,
-                                    oov_ind=oov_ind, agg_func=agg_funcs[0])
+            print(
+                f"concatenating multiple aggregate representation of each document: {agg_funcs}"
+            )
+        doc_reps = self.agg_doc_rep(
+            word2index=word2index,
+            emb_matrix=emb_matrix,
+            oov_ind=oov_ind,
+            agg_func=agg_funcs[0],
+        )
         for agg_func in agg_funcs[1:]:
-            doc_reps = np.concatenate((doc_reps,
-                                       self.agg_doc_rep(word2index=word2index, emb_matrix=emb_matrix,
-                                                        oov_ind=oov_ind, agg_func=agg_func)),
-                                      axis=1)
+            doc_reps = np.concatenate(
+                (
+                    doc_reps,
+                    self.agg_doc_rep(
+                        word2index=word2index,
+                        emb_matrix=emb_matrix,
+                        oov_ind=oov_ind,
+                        agg_func=agg_func,
+                    ),
+                ),
+                axis=1,
+            )
         return doc_reps
-
 
     def oov_stats(self, word2index=None):
         if not isinstance(word2index, dict):
-            raise TypeError("'word2index' should be a 'dict' but its not defined properly!")
-        outliers = {token: freq for token, freq in self.token_dist.items() if token not in word2index.keys()}
-        outliers = dict(sorted(outliers.items(), key=operator.itemgetter(1), reverse=True))
+            raise TypeError(
+                "'word2index' should be a 'dict' but its not defined properly!"
+            )
+        outliers = {
+            token: freq
+            for token, freq in self.token_dist.items()
+            if token not in word2index.keys()
+        }
+        outliers = dict(
+            sorted(outliers.items(), key=operator.itemgetter(1), reverse=True)
+        )
         if self.verbose:
             print(
-                f"The provided 'word2index' fails to cover {len(outliers) / self.nu_tokens:{2}.{3}} of unique tokens in the corpus")
+                f"The provided 'word2index' fails to cover {len(outliers) / self.nu_tokens:{2}.{3}} of unique tokens in the corpus"
+            )
             print(
-                f"This means {sum([freq for token, freq in outliers.items()]) / self.n_tokens:{2}.{3}} of all tokens in the corpus are not covered!")
+                f"This means {sum([freq for token, freq in outliers.items()]) / self.n_tokens:{2}.{3}} of all tokens in the corpus are not covered!"
+            )
         return outliers
 
 
-"""
-functions:
-"""
-
-
-def load_glove(file="./glove.840B.300d.txt"):
-    """
-    inputs:
-        file: the address of file containing embedding info
-    outputs:
-        embeddings_index: a dictionary containing {embedding words: their representation}
-    """
-
-    def get_coefs(word, *arg):
-        return word, np.asarray(arg, dtype='float32')
-
-    try:
-        open(file).close()
-    except OSError:
-        url = "http://nlp.stanford.edu/data/glove.840B.300d.zip"
-        adrs = "./glove.840B.300d"
-        print(f"Embedding file {file} unreachable")
-        print(f"downloading {url} int {adrs}")
-#        wget.download(url, adrs+".zip")
-        os.system("wget "+url)
-        os.system("unzip "+adrs+".zip")
-        os.system("ls")
-        file = adrs+".txt"
-
-    embeddings_dict = dict(get_coefs(*o.split(" ")) for o in open(file, encoding='latin'))
-    return embeddings_dict
-
 if __name__ == "__main__":
-    print(f"This code contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing")
+    print(
+        f"This code contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing"
+    )

@@ -1,4 +1,4 @@
-name: insight
+name: STTM-env
 channels:
   - conda-forge
   - defaults
@@ -8,11 +8,9 @@ dependencies:
   - certifi=2019.11.28=py37_0
   - cycler=0.10.0=py37_0
   - freetype=2.9.1=hb4e5f40_0
-  - funcy=1.14=py_0
-  - future=0.18.2=py37_0
-  - intel-openmp=2019.4=233
-  - jinja2=2.10.3=py_0
+  - intel-openmp=2020.0=166
   - joblib=0.14.1=py_0
+  - jpeg=9c=h1de35cc_1001
   - kiwisolver=1.1.0=py37h0a44026_0
   - libcxx=4.0.1=hcfea43d_1
   - libcxxabi=4.0.1=hcfea43d_1
@@ -20,45 +18,107 @@ dependencies:
   - libffi=3.2.1=h475c297_4
   - libgfortran=3.0.1=h93005f0_2
   - libpng=1.6.37=ha441bb4_0
-  - markupsafe=1.1.1=py37h0b31af3_0
-  - matplotlib=3.1.1=py37h54f8f79_0
+  - libtiff=4.0.10=hd08fb8f_1003
+  - llvm-openmp=4.0.1=hcfea43d_1
+  - lz4-c=1.8.3=h6de7cb9_1001
+  - matplotlib=3.1.3=py37_0
+  - matplotlib-base=3.1.3=py37h9aa3819_0
   - mkl=2019.4=233
   - mkl-service=2.3.0=py37hfbe908c_0
   - mkl_fft=1.0.15=py37h5e564d8_0
   - mkl_random=1.1.0=py37ha771720_0
   - ncurses=6.1=h0a44026_1
   - nltk=3.4.5=py37_0
-  - numexpr=2.7.0=py37h7413580_0
   - numpy=1.18.1=py37h7241aed_0
-  - numpy-base=1.18.1=py37h6575580_0
+  - numpy-base=1.18.1=py37h6575580_1
+  - olefile=0.46=py_0
   - openssl=1.1.1d=h0b31af3_0
-  - pandas=0.25.3=py37h0a44026_0
-  - pip=19.3.1=py37_0
-  - pyldavis=2.1.2=py_0
+  - pandas=1.0.1=py37h6c726b0_0
+  - pillow=6.2.0=py37hb68e598_0
+  - pip=20.0.2=py37_1
   - pyparsing=2.4.6=py_0
   - python=3.7.6=h359304d_2
-  - python-dateutil=2.8.1=py_0
   - pytz=2019.3=py_0
   - readline=7.0=h1de35cc_5
-  - scipy=1.3.1=py37h1410ff5_0
-  - setuptools=44.0.0=py37_0
-  - six=1.13.0=py37_0
-  - sqlite=3.30.1=ha441bb4_0
+  - scikit-learn=0.22.1=py37h27c97d8_0
+  - scipy=1.4.1=py37h9fa6033_0
+  - setuptools=45.2.0=py37_0
+  - six=1.14.0=py37_0
+  - sqlite=3.31.1=ha441bb4_0
   - tk=8.6.8=ha441bb4_0
-  - tornado=6.0.3=py37h1de35cc_0
-  - tqdm=4.41.1=py_0
-  - wheel=0.33.6=py37_0
+  - wheel=0.34.2=py37_0
+  - wordcloud=1.6.0=py37h0b31af3_0
   - xz=5.2.4=h1de35cc_4
   - zlib=1.2.11=h1de35cc_3
+  - zstd=1.4.0=ha9f0a20_0
   - pip:
+    - altair==4.0.1
+    - appnope==0.1.0
+    - astor==0.8.1
     - attrs==19.3.0
-    - importlib-metadata==1.4.0
-    - more-itertools==8.1.0
-    - packaging==20.0
-    - pluggy==0.13.1
-    - py==1.8.1
-    - pytest==5.3.4
+    - backcall==0.1.0
+    - base58==2.0.0
+    - bleach==3.1.0
+    - blinker==1.4
+    - boto3==1.12.0
+    - botocore==1.15.0
+    - chardet==3.0.4
+    - click==7.0
+    - decorator==4.4.1
+    - defusedxml==0.6.0
+    - docutils==0.15.2
+    - entrypoints==0.3
+    - enum-compat==0.0.3
+    - future==0.18.2
+    - googledrivedownloader==0.4
+    - idna==2.8
+    - importlib-metadata==1.5.0
+    - ipykernel==5.1.4
+    - ipython==7.12.0
+    - ipython-genutils==0.2.0
+    - ipywidgets==7.5.1
+    - jedi==0.16.0
+    - jinja2==2.11.1
+    - jmespath==0.9.4
+    - jsonschema==3.2.0
+    - jupyter-client==5.3.4
+    - jupyter-core==4.6.2
+    - markupsafe==1.1.1
+    - mistune==0.8.4
+    - nbconvert==5.6.1
+    - nbformat==5.0.4
+    - notebook==6.0.3
+    - pandocfilters==1.4.2
+    - parso==0.6.1
+    - pathtools==0.1.2
+    - pexpect==4.8.0
+    - pickleshare==0.7.5
+    - prometheus-client==0.7.1
+    - prompt-toolkit==3.0.3
+    - protobuf==3.11.3
+    - ptyprocess==0.6.0
+    - pydeck==0.2.1
+    - pygments==2.5.2
+    - pyrsistent==0.15.7
+    - python-dateutil==2.8.0
+    - pyzmq==18.1.1
+    - requests==2.22.0
+    - s3transfer==0.3.3
+    - send2trash==1.5.0
+    - streamlit==0.55.0
+    - terminado==0.8.3
+    - testpath==0.4.4
+    - toml==0.10.0
+    - toolz==0.10.0
+    - tornado==5.1.1
+    - traitlets==4.3.3
+    - tzlocal==2.0.0
+    - urllib3==1.25.8
+    - validators==0.14.2
+    - watchdog==0.10.2
     - wcwidth==0.1.8
-    - zipp==2.0.0
-prefix: //anaconda3/envs/insight
+    - webencodings==0.5.1
+    - widgetsnbextension==3.5.1
+    - zipp==2.2.0
+prefix: //anaconda3/envs/git-env
 
