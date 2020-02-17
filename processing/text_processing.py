@@ -1,21 +1,13 @@
-import os
-
-# import wget
-import numpy as np
 import operator
-from nltk.tokenize import TreebankWordTokenizer
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk import FreqDist
-from nltk.corpus import stopwords
-
-# from tqdm import tqdm_notebook as tqdm
-import string
+import os
 import re
+import string
 
-# try:
-#    stopwords = stopwords.words('english')
-# except:
-from nltk import download
+import numpy as np
+from nltk import FreqDist, download
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.tokenize import TreebankWordTokenizer
 
 download("stopwords")
 """
@@ -361,4 +353,3 @@ if __name__ == "__main__":
     print(
         f"This code contains some useful Classes (Embedding, Corpus) and functions (load_glove) for text processing"
     )
-

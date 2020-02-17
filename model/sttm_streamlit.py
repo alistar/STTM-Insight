@@ -1,21 +1,22 @@
-import matplotlib
-
-matplotlib.use("Agg")
-import sys
-
-sys.path.append("../")
-import streamlit as st
 import pickle
+import random
+import sys
+import time
+
+import matplotlib
 import numpy as np
 import pandas as pd
-from processing.text_processing import *
-from model.gsdmm_cls import GSDMM_Model
-from model.emb_kmeans_cls import Emb_Kmeans_Model
-import random
-from wordcloud import WordCloud
+import streamlit as st
 from matplotlib import pyplot as plt
-import time
+from wordcloud import WordCloud
+
 from google_drive_downloader import GoogleDriveDownloader as gdd
+from model.emb_kmeans_cls import Emb_Kmeans_Model
+from model.gsdmm_cls import GSDMM_Model
+from processing.text_processing import *
+
+matplotlib.use("Agg")
+sys.path.append("../")
 
 
 @st.cache
@@ -139,7 +140,7 @@ def show_insight(
             max_words=30,
             prefer_horizontal=0.7,
             contour_color="steelblue",
-        )  
+        )
 
     for i in range(nc2show):
         try:
@@ -220,7 +221,7 @@ if __name__ == "__main__":
         lemmatize = True
 
     model_choice = st.sidebar.radio("Which model?", ("Glove+K-means", "GSDMM"))
- 
+
     n_class = st.sidebar.number_input(
         "How many classes", format="%i", min_value=2, max_value=50, value=4, step=1
     )
@@ -334,4 +335,3 @@ if __name__ == "__main__":
             nc2show=nc2show,
             nword2show=nword2show,
         )
-

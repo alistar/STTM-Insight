@@ -1,13 +1,15 @@
+import pickle
+import random
 import sys
 
-sys.path.append("../")
-import pickle
 import numpy as np
 import pandas as pd
+from sklearn.metrics import adjusted_rand_score, homogeneity_completeness_v_measure
+
 from gsdmm.gsdmm.mgp import *
 from processing.text_processing import *
-import random
-from sklearn.metrics import homogeneity_completeness_v_measure, adjusted_rand_score
+
+sys.path.append("../")
 
 
 class GSDMM_Model:
@@ -134,4 +136,3 @@ if __name__ == "__main__":
     print(f"number of docs per cluster: {n_doc_per_c}")
     # NYT_data['GSDMM-pred'] = gsm.predict()
     # NYT_data.to_csv('NYT_4topics_gspred.csv', index=False)
-

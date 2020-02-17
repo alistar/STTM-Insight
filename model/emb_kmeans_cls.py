@@ -1,14 +1,16 @@
+import pickle
+import random
 import sys
 
-sys.path.append("../")
-import pickle
 import numpy as np
 import pandas as pd
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.metrics import adjusted_rand_score, homogeneity_completeness_v_measure
+
 from gsdmm.gsdmm.mgp import *
 from processing.text_processing import *
-import random
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.metrics import homogeneity_completeness_v_measure, adjusted_rand_score
+
+sys.path.append("../")
 
 
 class Emb_Kmeans_Model:
