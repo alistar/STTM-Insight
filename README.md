@@ -11,3 +11,12 @@ In the second approach I use transfer learning by combining sentence embedding a
 
 # App
 The two aforementioned models are integrated in a Streamlit app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results.
+
+# Intallation
+With Git and Conda already installed you need to:
+1- Clone this repo:
+git clone https://github.com/alistar/STTM-Insight.git
+
+2- Create a conda virtural environment using the provided .yml file. From within the STTM-Insight directory this can be done by:
+conda env create -f configs/config.yml
+
