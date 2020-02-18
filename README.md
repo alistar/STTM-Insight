@@ -15,11 +15,11 @@ The two aforementioned models are integrated in a Streamlit app which allows the
 # Intallation
 With Git and Conda already installed you need to:
 1- Clone this repo:
-'''
+```
 git clone https://github.com/alistar/STTM-Insight.git
-'''
+```
 
 2- Create a conda virtural environment using the provided .yml file. From within the STTM-Insight directory this can be done by:
-'''
+```
 conda env create -f configs/config.yml
-'''
+```
