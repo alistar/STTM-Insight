@@ -11,6 +11,8 @@ In the second approach I use transfer learning by combining sentence embedding a
 
 The two aforementioned models are integrated in a Streamlit app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results.
 
+[![Alt text](https://img.youtube.com/vi/ckn0lQPvgFw/0.jpg)](https://www.youtube.com/watch?v=ckn0lQPvgFw)
+
 # Intallation
 With Git and Conda already installed and up2date you need to:
 
