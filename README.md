@@ -9,7 +9,7 @@ The first approach is Gibbs Sampling for Drichlet Multinomial Mixture model, or 
 
 In the second approach I use transfer learning by combining sentence embedding and K-means clustering to find clusters of similar texts as proxy for the main topics. The current sentence embedding implementation uses agregated Glove word embedding which I found computationally efficient while achieveing BERT level representation performance. Topic modeling with this technique can be done using the "Emb_Kmeans_Model" class (see ./model/emb_kmeans_cls.py).
 
-The two aforementioned models are integrated in a Streamlit app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results.
+The two aforementioned models are integrated in a web app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results. You can see the app in action in the YouTube video below:
 
 [![Alt text](https://img.youtube.com/vi/ckn0lQPvgFw/0.jpg)](https://www.youtube.com/watch?v=ckn0lQPvgFw)
 
@@ -19,6 +19,8 @@ With Git and Conda already installed and up2date you need to:
 1- Clone this repo:
 ```
 git clone https://github.com/alistar/STTM-Insight.git
+git submodule init
+git submodule update
 ```
 
 2- Create a conda virtural environment called 'STTM-env' using the provided .yml file. From within the STTM-Insight directory this can be done by:
@@ -41,3 +43,4 @@ _Note that the first time you are running the app and using Glove embedding meth
 Besides using the default settings, the web-app has many features enabling the user to adjust the model and its input according to their needs. They can upload an arbitrary body of text as .csv file, choose the GSDMM topic extraction model, change the text processing steps, adjust various model parameters and the number of clusters in the output.
 
 
+***This is my pet project during the 3-4 weeks at Insight as an AI fellow***
