@@ -43,4 +43,4 @@ _Note that the first time you are running the app and using Glove embedding meth
 Besides using the default settings, the web-app has many features enabling the user to adjust the model and its input according to their needs. They can upload an arbitrary body of text as .csv file, choose the GSDMM topic extraction model, change the text processing steps, adjust various model parameters and the number of clusters in the output.
 
 
-***This is my pet project during the 3-4 weeks at Insight as an AI fellow***
+***This is a project I developed during my first 3 weeks at Insight as an AI fellow***
