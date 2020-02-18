@@ -30,9 +30,11 @@ First you need to launch the web-app locally in the "STTM-env" environment by:
 streamlit run model/sttm_streamlit.py
 ```
 
-After the last commant you should be able to connect to the web-app and interact with it. The app should pop-up in your internet browser but if not, you can manually got to the given local URL through "http://localhost:8509".
+After the last command you should be able to connect to the web-app and interact with it. The app should pop-up in your internet browser but if not, you can manually got to the given local URL through "http://localhost:8509".
 
 You can run a demo by pressing the big bottom in the middle of the page "Extract 4 topics using Glove+K-means method". This will load a test data-set which contains 3k article titles chosen from 4 different New York Times sections, perform sentence embedding using Glove and finally finding 4 clusters using K-means clustring. The the WordCloud of the 4 clusters/topics will be shown along with their top 10 most frequent words.
+
+_Note that the first time you are running the app and using Glove embedding method, it needs to download a file containing Glove embeddings. The file is 274M and depending on the internet speed might take some time. This only happens needs to be done once and subsequent runs will be faster_
 
 Besides using the default settings, the web-app has many features enabling the user to adjust the model and its input according to their needs. They can upload an arbitrary body of text as .csv file, choose the GSDMM topic extraction model, change the text processing steps, adjust various model parameters and the number of clusters in the output.
 
