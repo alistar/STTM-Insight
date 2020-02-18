@@ -1,6 +1,7 @@
 import pickle
 import random
 import sys
+import os
 import time
 
 import matplotlib
@@ -11,12 +12,15 @@ from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 
 from google_drive_downloader import GoogleDriveDownloader as gdd
+
+sys.path.append(os.getcwd())
+sys.path.append("../")
+
 from model.emb_kmeans_cls import Emb_Kmeans_Model
 from model.gsdmm_cls import GSDMM_Model
 from processing.text_processing import *
 
 matplotlib.use("Agg")
-sys.path.append("../")
 
 
 @st.cache
