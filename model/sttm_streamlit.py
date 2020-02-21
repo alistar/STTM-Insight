@@ -146,8 +146,8 @@ def show_insight(
             contour_color="steelblue",
         )
 
-    for i in range(nc2show):
-        try:
+    try:
+        for i in range(nc2show):
             st.subheader(
                 f"Cluster {i+1} contains {n_doc_per_c[i]} pieces (%{fractions[i]:.0f})"
             )
@@ -155,22 +155,24 @@ def show_insight(
             str_words_freq = ""
             j = 0
             this_cluster_words = freq_dists[i]
+            if len(this_cluster_words) < 1:
+                st.error(f"No words in this cluster!")
+                break
             for key, value in this_cluster_words.items():
                 if j >= nword2show:
                     break
                 j += 1
                 str_words_freq += f"\t{j}- {key} ({value}) "
             st.write(f"{str_words_freq}")
-            if show_wordclouds:
+            if show_wordclouds and len(this_cluster_words) > 0:
                 plt.imshow(
                     wordcloud.generate_from_frequencies(frequencies=this_cluster_words)
                 )
                 plt.axis("off")
                 st.pyplot()
 
-        except IndexError:
-            st.error(f"no more clusters/word are present!")
-            break
+    except IndexError:
+        st.error(f"No more clusters to show!")
     return
 
 

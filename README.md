@@ -1,15 +1,15 @@
 
 # Short Text Topic Modeling
-Unsupervised topic extraction from a body of text is one of the most frequetn use cases in NLP. Commonly used methods for this task, such as TFIDF or LDA, rely on co-occurance of words that define different topics. Since this does not happen often in very short text, those methods fail to extract topics from short text such as article titles and social medai posts.
+Unsupervised topic extraction from a body of text is one of the most frequetn use cases in NLP. Commonly used methods for this task, such as [TFIDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) or [LDA](https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation), rely on co-occurance of words that define different topics. Since this does not happen often in very short text, those methods fail to extract topics from short text such as article titles and social medai posts.
 
 This repository contains code base required for building and applying two different models for topic extraction specifically desinged to perform well on short text. Moreover, it includes an app to interactively apply them to arbitrary collection of text.
 
 # Models
-The first approach is Gibbs Sampling for Drichlet Multinomial Mixture model, or in short GSDMM, is developed by [Yin & Wang 2014](dbgroup.cs.tsinghua.edu.cn). Compared to other available methods GSDMM has excellent performance while being computationally efficient (see [Qiang et al. 2019](https://arxiv.org/abs/1904.07695)). Topic modeling with this technique can be performed using the "GSDMM_model" class (see ./model/gsdmm_cls.py).
+The first approach is **Gibbs Sampling for Drichlet Multinomial Mixture model**, or in short **GSDMM**, which is developed by [Yin & Wang 2014](dbgroup.cs.tsinghua.edu.cn). Compared to other available methods GSDMM has excellent performance while being computationally efficient (see [Qiang et al. 2019](https://arxiv.org/abs/1904.07695)). Topic modeling with this technique can be performed using the "GSDMM_model" class (see ./model/gsdmm_cls.py).
 
-In the second approach I use transfer learning by combining sentence embedding and K-means clustering to find clusters of similar texts as proxy for the main topics. The current sentence embedding implementation uses agregated Glove word embedding which I found computationally efficient while achieveing BERT level representation performance. Topic modeling with this technique can be done using the "Emb_Kmeans_Model" class (see ./model/emb_kmeans_cls.py).
+In the second approach I use transfer learning by combining sentence embedding and K-means clustering to find clusters of similar texts as proxy for the main topics. The current sentence embedding implementation uses agregated [Glove](https://nlp.stanford.edu/projects/glove/) word embedding which I found computationally efficient while achieveing [BERT](https://github.com/google-research/bert) level representation performance. Topic modeling with this technique can be done using the "Emb_Kmeans_Model" class (see ./model/emb_kmeans_cls.py).
 
-The two aforementioned models are integrated in a web app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results. You can see the app in action in the YouTube video below:
+The two aforementioned models are integrated in a web app which allows the user to upload a collection of short text (as a csv file) and extract topics from it interactively. The user can perform topic extraction immediatly using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results. You can see the app in action [here](54.189.234.199:8501) or in the YouTube video below:
 
 [![Alt text](https://img.youtube.com/vi/ckn0lQPvgFw/0.jpg)](https://www.youtube.com/watch?v=ckn0lQPvgFw)
 
@@ -19,6 +19,12 @@ With Git and Conda already installed and up2date you need to:
 1- Clone this repo:
 ```
 git clone https://github.com/alistar/STTM-Insight.git
+```
+
+2- Make sure the submodules are also copied:
+
+```
+cd STTM-Insight
 git submodule init
 git submodule update
 ```
