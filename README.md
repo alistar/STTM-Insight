@@ -43,9 +43,9 @@ After the last command you should be able to connect to the web-app and interact
 
 You can run a demo by pressing the big bottom in the middle of the page "Extract 4 topics using Glove+K-means method". This will load a test data-set which contains 3k article titles chosen from 4 different New York Times sections, perform sentence embedding using Glove and finally finding 4 clusters using K-means clustering. The the WordCloud of the 4 clusters/topics will be shown along with their top 10 most frequent words.
 
-_Note that when running the app for the first time with the Glove embedding method the code needs to download a file containing the Glove embeddings. The file is 274M and depending on the internet speed might take a few mins to download. This only needs to be done once and subsequent runs would not need to get the file_
+_Note that when running the app for the first time with the Glove embedding method the code needs to download a file containing the Glove embeddings. The file is 274M and depending on the internet speed might take a few mins to download. This only needs to be done once and subsequent runs will be faster_
 
-Besides using the default settings, the web-app has many features enabling the user to adjust the model and its inputs. It is possible to upload an arbitrary body of text as .csv file, choose the GSDMM topic extraction model, change the text processing steps, adjust various model parameters and the number of clusters to show in the results.
+Besides using the default settings, the web-app has many features enabling the user to adjust the model and its in/outputs. It is possible to upload an arbitrary body of text as .csv file, choose the GSDMM topic extraction model instead, change the text processing steps, adjust various model parameters and the number of clusters to output.
 
 
 ***This is a project I developed during my first 3 weeks at Insight as an AI fellow***
