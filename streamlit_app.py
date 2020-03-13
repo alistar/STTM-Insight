@@ -14,7 +14,6 @@ from wordcloud import WordCloud
 from google_drive_downloader import GoogleDriveDownloader as gdd
 
 sys.path.append(os.getcwd())
-sys.path.append("../")
 
 from model.emb_kmeans_cls import Emb_Kmeans_Model
 from model.gsdmm_cls import GSDMM_Model
@@ -217,14 +216,14 @@ if __name__ == "__main__":
         strip_non_ascii = st.sidebar.checkbox("Remove Non-Ascii")
         remove_digits = st.sidebar.checkbox("Remove Digits")
         remove_stopwords = st.sidebar.checkbox("Remove Stopwords")
-        lemmatize = st.sidebar.checkbox("Lemmatize")
+        # lemmatize = st.sidebar.checkbox("Lemmatize")
     else:
         lowercase = True
         remove_punct = True
         strip_non_ascii = True
         remove_digits = True
         remove_stopwords = True
-        lemmatize = True
+        lemmatize = False  # True
 
     model_choice = st.sidebar.radio("Which model?", ("Glove+K-means", "GSDMM"))
 
