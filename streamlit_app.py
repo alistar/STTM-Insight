@@ -62,7 +62,7 @@ def setup_model_Kmeans(
     strip_non_ascii=True,
     remove_digits=True,
     remove_stopwords=True,
-    lemmatize=True,
+    lemmatize=False,
     n_class=4,
     max_iter=1000,
     max_no_improvement=50,
@@ -103,7 +103,7 @@ def setup_model_GSDMM(
     strip_non_ascii=True,
     remove_digits=True,
     remove_stopwords=True,
-    lemmatize=True,
+    lemmatize=False,
     n_class=4,
     alpha=0.7,
     beta=0.6,
@@ -216,7 +216,7 @@ if __name__ == "__main__":
         strip_non_ascii = st.sidebar.checkbox("Remove Non-Ascii")
         remove_digits = st.sidebar.checkbox("Remove Digits")
         remove_stopwords = st.sidebar.checkbox("Remove Stopwords")
-        # lemmatize = st.sidebar.checkbox("Lemmatize")
+        lemmatize = False
     else:
         lowercase = True
         remove_punct = True
