@@ -10,6 +10,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import TreebankWordTokenizer
 
 download("stopwords")
+download("wordnet")
 """
 Classes:
 """
