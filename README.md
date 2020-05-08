@@ -8,11 +8,21 @@ The first approach is **Gibbs Sampling for Drichlet Multinomial Mixture model**,
 
 In the second approach I use transfer learning by combining sentence embedding and K-means clustering to find clusters of similar texts as proxy for the main topics. The current sentence embedding implementation uses aggregated [Glove](https://nlp.stanford.edu/projects/glove/) word embedding which I found computationally efficient while achieving [BERT](https://github.com/google-research/bert) level representation performance. Topic modeling with this technique can be done using the "Emb_Kmeans_Model" class (see ./model/emb_kmeans_cls.py).
 
-The two aforementioned models are integrated in a web app which allows the user to upload a collection of short text (as a .csv file) and extract topics from it interactively. The user can perform topic extraction immediately using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results. You can see the app in action [here](http://54.189.234.199:8501) or in the YouTube video below:
+The two aforementioned models are integrated in a web app which allows the user to upload a collection of short text (as a .csv file) and extract topics from it interactively. The user can perform topic extraction immediately using the default settings. They can also opt for choosing between the two models, adjusting text processing, modifying model parameters or even fine tune how they want to see the results. You can see the app in action in the YouTube video below:
 
 [![Alt text](https://img.youtube.com/vi/ckn0lQPvgFw/0.jpg)](https://www.youtube.com/watch?v=ckn0lQPvgFw)
 
-# Installation
+# Using Docker image
+The easiest way of running the app on your local machine is to download and run its [Docker image](https://hub.docker.com/r/alistar100/alisttm).
+
+Assuming you already have [Docker](https://www.docker.com/) downloaded installed and running, you can do this using the following command:
+```
+docker pull alistar100/alisttm:1.0
+docker run -p 8501:8501 --detach alistar100/alisttm:1.0
+```
+This automatically downloads and prepare all the necessary components and you can access the app in browser through "http://localhost:8501"
+
+# Installation using Conda
 With Git and Conda already installed and up2date you need to:
 
 1- Clone this repo:
@@ -39,7 +49,7 @@ First you need to launch the web-app locally in the "STTM-env" environment by:
 streamlit run model/sttm_streamlit.py
 ```
 
-After the last command you should be able to connect to the web-app and interact with it. The app should pop-up in your internet browser but if not, you can manually got to the given local URL through "http://localhost:8509".
+After the last command you should be able to connect to the web-app and interact with it. The app should pop-up in your internet browser but if not, you can manually go to the given local URL streamlit indicates such as "http://localhost:8509".
 
 You can run a demo by pressing the big bottom in the middle of the page "Extract 4 topics using Glove+K-means method". This will load a test data-set which contains 3k article titles chosen from 4 different New York Times sections, perform sentence embedding using Glove and finally finding 4 clusters using K-means clustering. The the WordCloud of the 4 clusters/topics will be shown along with their top 10 most frequent words.
 
