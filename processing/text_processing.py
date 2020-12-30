@@ -104,6 +104,7 @@ class Corpus:
         remove_digits (default to False): if True all digits will be removed
         remove_stopwords (default to False): if True NLTK."English" stopwords will be removed
         lemmatize (default to False: if True, NLTK.WordNetLemmatizer will be used to Lemmatize
+        remove_names (default to False: if True, NLTK.tag.stanfor.StanfordNERTagger will be used to remove known names)
         drop_empty_tokens (default to True): if False, docs which are empty after cleaning will be tokenized w/o any cleaning
 
     attributes:
@@ -149,6 +150,7 @@ class Corpus:
         remove_digits=False,
         remove_stopwords=False,
         lemmatize=False,
+        remove_names=False,
         drop_empty_tokens=True,
         verbose=1,
     ):
@@ -183,12 +185,33 @@ class Corpus:
                     [token for token in doc if token not in stopwordslist]
                 )
             tokenized_docs = tokenized_clean
+
         if lemmatize:
             lemmatizer = WordNetLemmatizer()
             tokenized_clean = []
             for doc in tokenized_docs:
                 tokenized_clean.append([lemmatizer.lemmatize(token) for token in doc])
             tokenized_docs = tokenized_clean
+
+        if remove_names:
+            allTokens = set()
+            for doc in tokenized_docs:
+                allTokens.update(set(doc))
+
+            from nltk.tag import pos_tag
+
+            tags = pos_tag(list(allTokens))
+            namesSet = set()
+            for tag in tags:
+                if tag[1] in {"NNP", "FW"}:
+                    namesSet.add(str(tag[0]))
+            tokenized_clean = []
+            for doc in tokenized_docs:
+                doc_clean = [token for token in doc if token not in namesSet]
+                if doc_clean:
+                    tokenized_clean.append(doc_clean)
+            tokenized_docs = tokenized_clean
+
         # Below checks empty tokenized docs that could happend after e.g., stopword removal and reverts them to original
         for i, doc in enumerate(tokenized_docs):
             if len(doc) < 1:
