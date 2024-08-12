@@ -6,4 +6,4 @@ pandas==1.0.1
 scikit-learn==0.22.1
 wordcloud==1.6.0
 googledrivedownloader==0.4
-streamlit==0.55.0
+streamlit==1.37.0
